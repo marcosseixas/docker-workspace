@@ -3,19 +3,27 @@ version: "3.3"
 services:
     web:
         image: nginx:latest
+        restart: always
         ports:
-            # - "8080:80"
             - "80:80"
         volumes:
-            - ../:/var/www/html
+            - ../:/var/www
             - ./nginx:/etc/nginx/conf.d
+            # - ./nginx/logs:/var/log/nginx
+       
         links:
             - php-fpm
-
     php-fpm:
+        restart: always
         image: marcosseixas/workstation-php-8-1-fpm 
         volumes:
-            - ../:/var/www/html
+            - ../:/var/www
+
+    redis:
+        network_mode: host
+        image: redis
+        command: redis-server
+        restart: always
 
     server-mysql:
         image: mysql:5.7
@@ -29,5 +37,3 @@ services:
         # - '3307:3306'
         volumes:
             - ./mysql/db:/var/lib/mysql
-volumes: 
-    server-mysql:
